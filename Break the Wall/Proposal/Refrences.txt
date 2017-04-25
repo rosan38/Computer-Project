@@ -1,0 +1,8 @@
+JAva ----http://www.webopedia.com/TERM/J/Java.html
+mysql-----http://searchenterpriselinux.techtarget.com/definition/MySQL
+netbeans----http://www.theserverside.com/definition/NetBeans
+waterfall----http://istqbexamcertification.com/what-is-waterfall-model-advantages-disadvantages-and-when-to-use-it/
+wbs-----http://searchsoftwarequality.techtarget.com/definition/work-breakdown-structure
+milestone----https://www.wrike.com/project-management-guide/faq/what-is-a-milestone-in-project-management/
+risk management------https://www.wrike.com/project-management-guide/faq/what-is-risk-management-in-project-management/
+configuration management----http://searchitoperations.techtarget.com/definition/configuration-management-CM

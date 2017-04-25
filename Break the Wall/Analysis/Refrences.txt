@@ -1,0 +1,5 @@
+MoSCoW---https://www.agilebusiness.org/content/moscow-prioritisation-0
+Software Architecture--https://msdn.microsoft.com/en-us/library/ee658098.aspx
+Use Case---http://searchsoftwarequality.techtarget.com/definition/use-case
+requirements---http://searchsoftwarequality.techtarget.com/definition/requirements-analysis
+Class diagram---https://www.tutorialspoint.com/uml/uml_class_diagram.htm
