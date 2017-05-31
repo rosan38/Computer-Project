@@ -20,6 +20,8 @@ public class Game implements Runnable {
     Thread thread = new Thread(this);
 
     public JFrame frame;
+    int level = 1;
+    public BufferedImage level1;
     public static Sprite coin;
     public static Sprite block;
     public static Sprite pipeDown;
@@ -46,6 +48,14 @@ public class Game implements Runnable {
     public int id = 0;
     public boolean translate = false;
     boolean resultDisplayed = false;
+
+    public void switchLevel(int number) {
+        this.handler.clearWorld();
+        this.handler.pipesUp = 0;
+        this.handler.pipesDown = 0;
+                this.handler.createLevel(this.level1);
+    }
+
     public void init(int level) {
         sheet = new SpriteSheet("/items/spritesheet.png");
         grass = new Sprite(sheet, 3, 0);
@@ -60,6 +70,24 @@ public class Game implements Runnable {
         pipeDown = new Sprite(sheet, 4, 1);
         block = new Sprite(sheet, 5, 1);
         coin = new Sprite(sheet, 5, 2);
+        try {
+            this.level1 = ImageIO.read(getClass().getResource("/items/level1.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
+        for (int i = 0; i < this.flag.length; i++) {
+            this.flag[i] = new Sprite(sheet, i, 2);
+        }
+        }
+        switch (level) {
+            case 1:
+                switchLevel(1);
+                break;
+        }
+        this.handler.initTile();
+    }
+
 
     public Game(int width, int height, int id) {
         this.id = id;
@@ -124,9 +152,6 @@ public class Game implements Runnable {
         }
     }
 
-    public void tick() {
-        }
-    }
     public void render() {
         if (this.bs == null) {
             this.canvas.createBufferStrategy(3);
@@ -135,5 +160,7 @@ public class Game implements Runnable {
         this.g = this.bs.getDrawGraphics();
         this.g.clearRect(0, 0, 3000, 3000);
         this.g.drawImage(background, 0, 0, null);
-   }
+       this.bs.show();
+        this.g.dispose();
+    }
 }
