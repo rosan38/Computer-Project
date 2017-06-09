@@ -2,6 +2,8 @@ package edu.softwarica.game.game;
 
 import edu.softwarica.game.graphics.Sprite;
 import edu.softwarica.game.graphics.SpriteSheet;
+import edu.softwarica.game.input.KeyManager;
+import edu.softwarica.game.items.Player;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -22,6 +24,8 @@ public class Game implements Runnable {
     public JFrame frame;
     int level = 1;
     public BufferedImage level1;
+    public BufferedImage background;
+    public Handler handler = new Handler(this);
     public static Sprite coin;
     public static Sprite block;
     public static Sprite pipeDown;
@@ -37,6 +41,7 @@ public class Game implements Runnable {
     static SpriteSheet sheet;
     int pipes = 0;
     Canvas canvas;
+    KeyManager km = new KeyManager(this);
     public Graphics g;
     public Sprite[] flag = new Sprite[3];
     public Sprite[] playerNormal = new Sprite[4];
@@ -45,7 +50,6 @@ public class Game implements Runnable {
     volatile boolean running = false;
     public int seconds = 0;
     public int completionTime = 100;
-    public int id = 0;
     public boolean translate = false;
     boolean resultDisplayed = false;
 
@@ -72,22 +76,31 @@ public class Game implements Runnable {
         coin = new Sprite(sheet, 5, 2);
         try {
             this.level1 = ImageIO.read(getClass().getResource("/items/level1.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(0);
-        }
+          
         for (int i = 0; i < this.flag.length; i++) {
             this.flag[i] = new Sprite(sheet, i, 2);
         }
+        for (int i = 0; i < this.playerNormal.length; i++) {
+            this.playerNormal[i] = new Sprite(sheet, i, 3);
+        }
+        for (int i = 0; i < this.inAirPlayer.length; i++) {
+            if (i < 2) {
+                this.inAirPlayer[i] = new Sprite(sheet, 3, i + 1);
+            } else {
+                this.inAirPlayer[i] = new Sprite(sheet, 4, i - 1);
+            }
         }
         switch (level) {
             case 1:
                 switchLevel(1);
-                break;
-        }
+                   }
+        this.handler.initCreature();
         this.handler.initTile();
     }
 
+    public KeyManager getKeyManager() {
+        return this.km;
+    }
 
     public Game(int width, int height, int id) {
         this.id = id;
@@ -152,6 +165,11 @@ public class Game implements Runnable {
         }
     }
 
+
+    public Player getPlayer() {
+        return this.handler.getPlayer();
+    }
+
     public void render() {
         if (this.bs == null) {
             this.canvas.createBufferStrategy(3);
@@ -160,7 +178,7 @@ public class Game implements Runnable {
         this.g = this.bs.getDrawGraphics();
         this.g.clearRect(0, 0, 3000, 3000);
         this.g.drawImage(background, 0, 0, null);
-       this.bs.show();
+        this.bs.show();
         this.g.dispose();
     }
 }
