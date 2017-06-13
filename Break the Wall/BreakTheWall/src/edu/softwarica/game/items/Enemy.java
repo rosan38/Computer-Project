@@ -29,6 +29,17 @@ public class Enemy extends Creature {
         }
     }
 
+    public void render(Graphics g) {
+        if ((this.x > this.game.handler.getPlayer().getX() + this.game.handler.getPlayer().getWidth() + 1240) || (this.y > this.game.handler.getPlayer().getY() + this.game.handler.getPlayer().getHeight() + 580)) {
+            return;
+        }
+        if (this.heading == 0) {
+            g.drawImage(this.meR, this.x, this.y, this.width, this.height, null);
+        } else {
+            g.drawImage(this.meL, this.x, this.y, this.width, this.height, null);
+        }
+    }
+
     public void tick() {
         if (this.velX > 0) {
             this.heading = 0;

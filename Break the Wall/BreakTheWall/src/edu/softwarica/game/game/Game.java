@@ -1,9 +1,11 @@
 package edu.softwarica.game.game;
 
+import edu.softwarica.game.controller.ScoreController;
 import edu.softwarica.game.graphics.Sprite;
 import edu.softwarica.game.graphics.SpriteSheet;
 import edu.softwarica.game.input.KeyManager;
 import edu.softwarica.game.items.Player;
+import edu.softwarica.game.views.ScoreDisplay;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -24,6 +26,10 @@ public class Game implements Runnable {
     public JFrame frame;
     int level = 1;
     public BufferedImage level1;
+    public BufferedImage level2;
+    public BufferedImage level3;
+    public BufferedImage level4;
+    public BufferedImage level5;
     public BufferedImage background;
     public Handler handler = new Handler(this);
     public static Sprite coin;
@@ -50,6 +56,8 @@ public class Game implements Runnable {
     volatile boolean running = false;
     public int seconds = 0;
     public int completionTime = 100;
+    public int score = 0;
+    public int id = 0;
     public boolean translate = false;
     boolean resultDisplayed = false;
 
@@ -57,7 +65,26 @@ public class Game implements Runnable {
         this.handler.clearWorld();
         this.handler.pipesUp = 0;
         this.handler.pipesDown = 0;
+        switch (number) {
+            case 1:
                 this.handler.createLevel(this.level1);
+                break;
+            case 2:
+                this.handler.createLevel(this.level2);
+                this.seconds = 0;
+                break;
+            case 3:
+                this.handler.createLevel(this.level3);
+                this.seconds = 0;
+                break;
+            case 4:
+                this.handler.createLevel(this.level4);
+                this.seconds = 0;
+                break;
+            case 5:
+                this.handler.createLevel(this.level5);
+                this.seconds = 0;
+        }
     }
 
     public void init(int level) {
@@ -76,7 +103,15 @@ public class Game implements Runnable {
         coin = new Sprite(sheet, 5, 2);
         try {
             this.level1 = ImageIO.read(getClass().getResource("/items/level1.png"));
-          
+            this.level2 = ImageIO.read(getClass().getResource("/items/level2.png"));
+            this.level3 = ImageIO.read(getClass().getResource("/items/level3.png"));
+            this.level4 = ImageIO.read(getClass().getResource("/items/level4.png"));
+            this.level5 = ImageIO.read(getClass().getResource("/items/level5.png"));
+            this.background = ImageIO.read(getClass().getResource("/items/background.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
         for (int i = 0; i < this.flag.length; i++) {
             this.flag[i] = new Sprite(sheet, i, 2);
         }
@@ -93,7 +128,19 @@ public class Game implements Runnable {
         switch (level) {
             case 1:
                 switchLevel(1);
-                   }
+                break;
+            case 2:
+                switchLevel(2);
+                break;
+            case 3:
+                switchLevel(3);
+                break;
+            case 4:
+                switchLevel(4);
+                break;
+            case 5:
+                switchLevel(5);
+        }
         this.handler.initCreature();
         this.handler.initTile();
     }
@@ -165,6 +212,17 @@ public class Game implements Runnable {
         }
     }
 
+    public void tick() {
+        this.handler.tickCreature();
+        this.km.tick();
+        if ((this.completionTime - this.seconds <= 0) && (!this.resultDisplayed)) {
+            ScoreDisplay d = new ScoreDisplay(0, this.g, this);
+            this.resultDisplayed = true;
+            this.frame.setVisible(false);
+            d = null;
+            stop();
+        }
+    }
 
     public Player getPlayer() {
         return this.handler.getPlayer();
@@ -178,6 +236,71 @@ public class Game implements Runnable {
         this.g = this.bs.getDrawGraphics();
         this.g.clearRect(0, 0, 3000, 3000);
         this.g.drawImage(background, 0, 0, null);
+        if ((!this.handler.getPlayer().inPipe) && (this.handler.getPlayer().getY() <= 140)) {
+            this.g.translate(0, -this.handler.getPlayer().getY() + 140);
+            this.translate = true;
+        } else if ((!this.handler.getPlayer().inPipe) && (this.handler.getPlayer().getY() > 704)) {
+            this.g.translate(0, -this.handler.getPlayer().getY() + 140);
+            this.translate = true;
+        } else {
+            this.translate = false;
+        }
+        this.g.translate(-this.handler.getPlayer().getX() + 200, 0);
+        this.handler.renderCreature(this.g);
+        this.handler.renderTile(this.g);
+        this.g.setColor(Color.WHITE);
+        this.g.setFont(new Font("Serif", 1, 12));
+        if (!this.translate) {
+            this.g.drawString("TIME : " + (this.completionTime - this.seconds), this.handler.getPlayer().getX() + 100, 50);
+            this.g.drawString("SCORE : " + this.score, getPlayer().getX() + 200, 50);
+        } else {
+            this.g.drawString("TIME : " + (this.completionTime - this.seconds), this.handler.getPlayer().getX() + 100, this.handler.getPlayer().getY() - 90);
+            this.g.drawString("SCORE : " + this.score, getPlayer().getX() + 200, getPlayer().getY() - 90);
+        }
+        ScoreController sc1 = new ScoreController(id);
+        List<Integer> sco = null;
+        sco = sc1.getScore(null);
+        int size = sco.size();
+        if (size == 0) {
+            this.g.setFont(new Font("Serif", 1, 20));
+            this.g.setColor(Color.red);
+            this.g.drawString("HIGHEST SCORE: " + this.score, getPlayer().getX() + 300, 50);
+        } else if (size == 1) {
+            int a = sco.get(sco.size() - 1);
+            if (a < this.score) {
+                this.g.setFont(new Font("Serif", 1, 20));
+                this.g.setColor(Color.red);
+                this.g.drawString("HIGHEST SCORE: " + this.score, getPlayer().getX() + 300, 50);
+            }
+        } else if (size == 2) {
+            int a = sco.get(sco.size() - 2);
+            if (a < this.score) {
+                this.g.setFont(new Font("Serif", 1, 20));
+                this.g.setColor(Color.red);
+                this.g.drawString("HIGHEST SCORE: " + this.score, getPlayer().getX() + 300, 50);
+            }
+        } else if (size == 3) {
+            int a = sco.get(sco.size() - 3);
+            if (a < this.score) {
+                this.g.setFont(new Font("Serif", 1, 20));
+                this.g.setColor(Color.red);
+                this.g.drawString("HIGHEST SCORE: " + this.score, getPlayer().getX() + 300, 50);
+            }
+        } else if (size == 4) {
+            int a = sco.get(sco.size() - 4);
+            if (a < this.score) {
+                this.g.setFont(new Font("Serif", 1, 20));
+                this.g.setColor(Color.red);
+                this.g.drawString("HIGHEST SCORE: " + this.score, getPlayer().getX() + 300, 50);
+            }
+        } else if (size == 5) {
+            int a = sco.get(sco.size() - 5);
+            if (a < this.score) {
+                this.g.setFont(new Font("Serif", 1, 20));
+                this.g.setColor(Color.red);
+                this.g.drawString("HIGHEST SCORE: " + this.score, getPlayer().getX() + 300, 50);
+            }
+        }
         this.bs.show();
         this.g.dispose();
     }

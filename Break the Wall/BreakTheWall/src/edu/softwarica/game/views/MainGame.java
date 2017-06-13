@@ -5,6 +5,7 @@
  */
 package edu.softwarica.game.views;
 
+import edu.softwarica.game.game.Game;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -85,12 +86,20 @@ public class MainGame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand() == "Start") {
             frame.setVisible(false);
-         }
+            game = new Game(1440, 720,id);
+            game.start();
+        }
         if (e.getActionCommand() == "Score") {
-         }
+            frame.setVisible(false);
+            ScoreList scorelist = new ScoreList(id);
+        }
         if (e.getActionCommand() == "Settings") {
-         }
+            frame.setVisible(false);
+            Settings settings = new Settings();
+        }
         if (e.getActionCommand() == "Logout") {
-         }
+            frame.setVisible(false);
+            BreakTheWall btw = new BreakTheWall();
+        }
     }
 }

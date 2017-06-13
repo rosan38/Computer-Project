@@ -2,6 +2,7 @@ package edu.softwarica.game.items;
 
 import edu.softwarica.game.game.Game;
 import edu.softwarica.game.game.Ids;
+import edu.softwarica.game.views.ScoreDisplay;
 import edu.softwarica.game.utils.Assets;
 import edu.softwarica.game.walls.Flag;
 import edu.softwarica.game.walls.Tile;
@@ -15,6 +16,7 @@ public class Player extends Creature {
     int velY = 0;
     int velX = 0;
     float gravity = 2.0F;
+    ScoreDisplay d;
     BufferedImage meRnormal;
     BufferedImage meLnormal;
     BufferedImage[] meNormal = new BufferedImage[4];
@@ -96,6 +98,17 @@ public class Player extends Creature {
         if ((this.fl != null) && (this.fl.animate) && (this.fl.flagY >= this.fl.y + this.fl.getHeight() * 3)) {
             this.fl.animate = false;
             Tile t = this.fl;
+            this.game.init(t.level + 1);
+            if (t.level == 5) {
+                this.game.handler.clearWorld();
+                this.game.frame.setVisible(false);
+                if ((!this.resultPrinted) && (this.d == null)) {
+                    this.d = new ScoreDisplay(0, this.game.g, this.game);
+                    this.resultPrinted = true;
+                    this.d = null;
+                    this.game.stop();
+                    this.game.handler.die(this);
+                }
             }
         }
         if ((this.velY != 0) && (!this.inPipe)) {

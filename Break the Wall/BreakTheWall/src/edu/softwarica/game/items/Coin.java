@@ -18,6 +18,19 @@ public class Coin extends Creature {
         g.drawImage(this.me, this.x, this.y, this.width, this.height, null);
     }
 
+    public void tick() {
+        for (int i = 0; i < this.game.handler.creature.size(); i++) {
+            if (((Creature) this.game.handler.creature.get(i)).getId() == Ids.player) {
+                Player p = (Player) this.game.handler.creature.get(i);
+                if (p.getBounds().intersects(getBounds())) {
+                    this.game.score += 100;
+                    new Assets().playSound("/items/coin.wav");
+                    this.game.handler.die(this);
+                }
+            }
+        }
+    }
+
     public void init() {
         this.me = Game.coin.getBufferedImage();
     }
